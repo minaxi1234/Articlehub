@@ -1,4 +1,4 @@
-# 🛤️ Jerney — Blog Platform
+# 🛤️ ArticleHub DevOps Project
 
 A Gen-Z vibe blog platform built with a 3-tier architecture — React frontend, Node.js backend, and PostgreSQL database.
 
