@@ -14,12 +14,45 @@ pipeline {
             }
         }
 
+        stage('Backend Lint') {
+            steps {
+                dir('backend') {
+                    sh 'npm ci'
+                    sh 'npm run lint'
+                }
+            }
+        }
+
+        stage('Frontend Lint') {
+            steps {
+                dir('frontend') {
+                    sh 'npm ci'
+                    sh 'npm run lint'
+                }
+            }
+        }
+
+        stage('Frontend Build') {
+            steps {
+                dir('frontend') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
         stage('Build Docker Images') {
-    steps {
-        sh 'docker build -t ${DOCKER_USER}/articlehub-backend:latest ./backend'
-        sh 'docker build -t ${DOCKER_USER}/articlehub-frontend:latest ./frontend'
-    }
-}
+            steps {
+                sh 'docker build -t ${DOCKER_USER}/articlehub-backend:latest ./backend'
+                sh 'docker build -t ${DOCKER_USER}/articlehub-frontend:latest ./frontend'
+            }
+        }
+
+        stage('Trivy Security Scan') {
+            steps {
+                sh 'trivy image ${DOCKER_USER}/articlehub-backend:latest'
+                sh 'trivy image ${DOCKER_USER}/articlehub-frontend:latest'
+            }
+        }
 
         stage('Push to Docker Hub') {
             steps {
