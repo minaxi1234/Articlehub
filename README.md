@@ -21,7 +21,7 @@ The application contains:
 
 The project demonstrates how an application can be containerized, scanned, stored in a Docker registry, deployed on AWS, and made publicly accessible through an Application Load Balancer.
 
-----
+---
 
 ## Architecture
 
