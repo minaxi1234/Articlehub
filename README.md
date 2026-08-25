@@ -24,7 +24,7 @@ The project demonstrates how an application can be containerized, scanned, store
 ---
 
 ## Architecture
-
+`
 ```text
                     GitHub
                        |
