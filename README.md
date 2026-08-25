@@ -6,7 +6,7 @@ ArticleHub is a full-stack article and blog application deployed on AWS using a 
 
 The project demonstrates how a containerized application can be built, security-scanned, pushed to Docker Hub, and automatically deployed to AWS EC2 using Jenkins and Ansible.
 
-### Technologies Used
+## Technologies Used
 
 - React + Vite
 - Node.js + Express
@@ -64,16 +64,16 @@ ArticleHub Application
 AWS RDS PostgreSQL
 CI/CD Pipeline
 
-Jenkins automates the complete CI/CD workflow.
+Jenkins automates the complete Continuous Integration and Continuous Deployment workflow.
 
 The pipeline performs:
 
 Checkout source code from GitHub.
-Build frontend Docker image.
-Build backend Docker image.
-Scan images using Trivy.
-Push images to Docker Hub.
-Deploy the latest images using Ansible.
+Build the frontend Docker image.
+Build the backend Docker image.
+Scan both images using Trivy.
+Push the images to Docker Hub.
+Deploy the latest images to AWS EC2 using Ansible.
 Start the application using Docker Compose.
 Verify the deployment.
 
@@ -115,7 +115,7 @@ meenakshisunil/articlehub-frontend:latest
 meenakshisunil/articlehub-backend:latest
 Docker Hub
 
-Jenkins pushes the successfully built and scanned images to Docker Hub.
+Jenkins pushes the successfully built and scanned Docker images to Docker Hub.
 
 Docker Hub Images
 
@@ -131,7 +131,7 @@ Connecting to EC2
 Preparing the deployment directory
 Pulling the latest Docker images
 Running Docker Compose
-Starting frontend and backend containers
+Starting the frontend and backend containers
 Verifying the deployment
 
 Application directory:
@@ -193,8 +193,6 @@ Application Load Balancer
 
 HTTPS Listener
 
-ArticleHub HTTPS Application
-
 Target Group
 
 The target group forwards traffic to the ArticleHub frontend running on EC2.
@@ -254,6 +252,8 @@ Docker Containers
 
 ArticleHub Application
 
+ALB HTTP 200
+
 Jenkins Deployment Success
 
 End-to-End Flow
@@ -268,7 +268,7 @@ Jenkins
    +---- Checkout
    +---- Docker Build
    +---- Trivy Scan
-   +---- Docker Hub
+   +---- Push to Docker Hub
    +---- Ansible Deployment
    |
    v
@@ -290,58 +290,40 @@ ArticleHub
    |
    v
 AWS RDS PostgreSQL
-# Project Screenshots
+Project Screenshots
+01 – ArticleHub Application
 
-## 01 – ArticleHub Application
-![ArticleHub Application](screenshots/01-articlehub-application.png)
+02 – EC2 Instance
 
-## 02 – EC2 Instance
-![EC2 Instance](screenshots/02-ec2-instance.png)
+03 – RDS Database
 
-## 03 – RDS Database
-![RDS Database](screenshots/03-rds-database.png)
+04 – Application Load Balancer
 
-## 04 – Application Load Balancer
-![Application Load Balancer](screenshots/04-application-load-balancer.png)
+05 – ALB Listener
 
-## 05 – ALB Listener
-![ALB Listener](screenshots/05-alb-listener.png)
+06 – Target Group Health
 
-## 06 – Target Group Health
-![Target Group Health](screenshots/06-target-group-healthy.png)
+07 – ALB Security Group
 
-## 07 – ALB Security Group
-![ALB Security Group](screenshots/07-alb-security-group.png)
+08 – Application Security Group
 
-## 08 – Application Security Group
-![Application Security Group](screenshots/08-app-security-group.png)
+09 – Docker Containers
 
-## 09 – Docker Containers
-![Docker Containers](screenshots/09-docker-containers.png)
+10 – Docker Compose
 
-## 10 – Docker Compose
-![Docker Compose](screenshots/10-docker-compose.png)
+11 – Ansible Playbook
 
-## 11 – Ansible Playbook
-![Ansible Playbook](screenshots/11-ansible-playbook%20(2).png)
+12 – Ansible Deployment Success
 
-## 12 – Ansible Success
-![Ansible Success](screenshots/12-ansible-success.png)
+13 – Jenkins CI/CD Success
 
-## 13 – Jenkins CI/CD Success
-![Jenkins CI/CD Success](screenshots/13-jenkins-cicd-success.png)
+14 – Terraform Infrastructure
 
-## 14 – Terraform Infrastructure
-![Terraform Infrastructure](screenshots/14-terraform-infrastructure.png)
+15 – Terraform Apply
 
-## 15 – Terraform Apply
-![Terraform Apply](screenshots/15-terraform-apply.png)
+16 – ALB HTTP 200
 
-## 16 – ALB HTTP 200
-![ALB HTTP 200](screenshots/16-alb-http-200.png)
-
-## 17 – Docker Hub Images
-![Docker Hub Images](screenshots/17-dockerhub-images.png)
+17 – Docker Hub Images
 
 What This Project Demonstrates
 Git and GitHub
