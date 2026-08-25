@@ -48,5 +48,39 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy with Ansible') {
+            steps {
+                withCredentials([
+                    sshUserPrivateKey(
+                        credentialsId: 'articlehub-ssh',
+                        keyFileVariable: 'SSH_KEY',
+                        usernameVariable: 'SSH_USER'
+                    ),
+                    string(
+                        credentialsId: 'articlehub-db-password',
+                        variable: 'DB_PASSWORD'
+                    )
+                ]) {
+
+                    sh '''
+                        chmod 600 "$SSH_KEY"
+
+                        ANSIBLE_HOST_KEY_CHECKING=False \
+                        ansible-playbook \
+                        -i ansible/inventory \
+                        ansible/playbook.yml \
+                        --private-key "$SSH_KEY" \
+                        -u "$SSH_USER" \
+                        -e "db_host=articlehub-postgres.czaaui0cgz5u.ap-south-1.rds.amazonaws.com" \
+                        -e "db_port=5432" \
+                        -e "db_user=articlehub_user" \
+                        -e "db_password=$DB_PASSWORD" \
+                        -e "db_name=my_db"
+                    '''
+                }
+            }
+        }
+
     }
 }

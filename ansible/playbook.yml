@@ -1,0 +1,134 @@
+---
+- name: Deploy ArticleHub
+  hosts: articlehub
+  become: true
+
+  tasks:
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Remove old ArticleHub deployment
+      file:
+        path: /opt/articlehub
+        state: absent
+
+    - name: Create ArticleHub directory
+      file:
+        path: /opt/articlehub
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Clone ArticleHub repository
+      git:
+        repo: https://github.com/minaxi1234/Articlehub.git
+        dest: /opt/articlehub
+        version: main
+        force: true
+
+    - name: Check Docker Compose file
+      stat:
+        path: /opt/articlehub/docker-compose.yml
+      register: compose_file
+
+    - name: Fail if Docker Compose file is missing
+      fail:
+        msg: "docker-compose.yml was not found in /opt/articlehub"
+      when: not compose_file.stat.exists
+
+    - name: Create ArticleHub environment file
+      copy:
+        dest: /opt/articlehub/.env
+        owner: ubuntu
+        group: ubuntu
+        mode: '0600'
+        content: |
+          DB_HOST={{ db_host }}
+          DB_PORT={{ db_port }}
+          DB_USER={{ db_user }}
+          DB_PASSWORD={{ db_password }}
+          DB_NAME={{ db_name }}
+
+    - name: Stop existing ArticleHub containers
+      command:
+        cmd: docker compose down
+        chdir: /opt/articlehub
+      changed_when: false
+      failed_when: false
+
+    - name: Pull latest ArticleHub Docker images
+      command:
+        cmd: docker compose pull
+        chdir: /opt/articlehub
+
+    - name: Start ArticleHub application
+      command:
+        cmd: docker compose up -d
+        chdir: /opt/articlehub
+
+    - name: Wait for containers to start
+      pause:
+        seconds: 10
+
+    - name: Check ArticleHub containers
+      command:
+        cmd: docker compose ps
+        chdir: /opt/articlehub
+      register: compose_status
+      changed_when: false
+
+    - name: Display ArticleHub container status
+      debug:
+        var: compose_status.stdout_lines
+
+    - name: Check backend container
+      command:
+        cmd: docker inspect -f "{{ '{{' }}.State.Status{{ '}}' }}" articlehub-backend
+      register: backend_status
+      changed_when: false
+
+    - name: Check frontend container
+      command:
+        cmd: docker inspect -f "{{ '{{' }}.State.Status{{ '}}' }}" articlehub-frontend
+      register: frontend_status
+      changed_when: false
+
+    - name: Display backend status
+      debug:
+        msg: "ArticleHub backend status: {{ backend_status.stdout }}"
+
+    - name: Display frontend status
+      debug:
+        msg: "ArticleHub frontend status: {{ frontend_status.stdout }}"
+
+    - name: Fail if backend is not running
+      fail:
+        msg: "ArticleHub backend is not running. Check: sudo docker logs articlehub-backend"
+      when: backend_status.stdout != "running"
+
+    - name: Fail if frontend is not running
+      fail:
+        msg: "ArticleHub frontend is not running. Check: sudo docker logs articlehub-frontend"
+      when: frontend_status.stdout != "running"
+
+    - name: Check frontend HTTP response
+      uri:
+        url: http://127.0.0.1:3000
+        method: GET
+        status_code: 200
+      register: frontend_http
+
+    - name: Display final deployment result
+      debug:
+        msg:
+          - "=========================================="
+          - "ArticleHub deployment successful"
+          - "Frontend HTTP status: {{ frontend_http.status }}"
+          - "Backend container: {{ backend_status.stdout }}"
+          - "Frontend container: {{ frontend_status.stdout }}"
+          - "=========================================="

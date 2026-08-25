@@ -1,28 +1,35 @@
 services:
+
   backend:
-    build:
-      context: ./backend
+    image: meenakshisunil/articlehub-backend:latest
+
     container_name: articlehub-backend
+
     environment:
-      DB_HOST: articlehub-postgres.czaaui0cgz5u.ap-south-1.rds.amazonaws.com
-      DB_PORT: 5432
-      DB_USER: articlehub_user
-      DB_PASSWORD: articlehub_pass_2026
-      DB_NAME: my_db
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
       PORT: 5000
+
     ports:
       - "5000:5000"
+
     networks:
       - articlehub-network
 
   frontend:
-    build:
-      context: ./frontend
+    image: meenakshisunil/articlehub-frontend:latest
+
     container_name: articlehub-frontend
+
     ports:
       - "3000:80"
+
     depends_on:
       - backend
+
     networks:
       - articlehub-network
 
