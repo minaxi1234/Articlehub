@@ -81,8 +81,6 @@ The Docker images are:
 
 meenakshisunil/articlehub-frontend:latest
 meenakshisunil/articlehub-backend:latest
-Jenkins CI/CD Success
-
 Docker
 
 The application uses two Docker containers:
@@ -93,18 +91,10 @@ articlehub-backend
 The containers communicate through:
 
 articlehub-network
-
-Frontend:
-
+Frontend
 EC2 Port 3000 → Container Port 80
-
-Backend:
-
+Backend
 EC2 Port 5000 → Container Port 5000
-Docker Containers
-
-Docker Compose
-
 Trivy Security Scanning
 
 Trivy is integrated into the Jenkins pipeline to scan the Docker images for known vulnerabilities before they are pushed to Docker Hub.
@@ -117,8 +107,10 @@ Docker Hub
 
 Jenkins pushes the successfully built and scanned Docker images to Docker Hub.
 
-Docker Hub Images
+Images:
 
+meenakshisunil/articlehub-frontend:latest
+meenakshisunil/articlehub-backend:latest
 Ansible Deployment
 
 Ansible is used for Continuous Deployment.
@@ -127,20 +119,16 @@ Jenkins uses Ansible to deploy the latest Docker images to the AWS EC2 server.
 
 The deployment includes:
 
-Connecting to EC2
-Preparing the deployment directory
-Pulling the latest Docker images
-Running Docker Compose
-Starting the frontend and backend containers
-Verifying the deployment
+Connecting to EC2.
+Preparing the deployment directory.
+Pulling the latest Docker images.
+Running Docker Compose.
+Starting the frontend and backend containers.
+Verifying the deployment.
 
 Application directory:
 
 /opt/articlehub
-Ansible Playbook
-
-Ansible Deployment Success
-
 Terraform
 
 Terraform is used as Infrastructure as Code to provision and manage the AWS infrastructure.
@@ -157,10 +145,6 @@ RDS PostgreSQL
 AWS Region:
 
 ap-south-1
-Terraform Infrastructure
-
-Terraform Apply
-
 AWS EC2
 
 ArticleHub is deployed on an AWS EC2 instance running Docker and Docker Compose.
@@ -168,8 +152,6 @@ ArticleHub is deployed on an AWS EC2 instance running Docker and Docker Compose.
 Deployment directory:
 
 /opt/articlehub
-EC2 Instance
-
 Application Load Balancer
 
 The AWS Application Load Balancer provides public HTTPS access to ArticleHub.
@@ -177,23 +159,18 @@ The AWS Application Load Balancer provides public HTTPS access to ArticleHub.
 Traffic flow:
 
 User
- |
- v
+  |
+  v
 Application Load Balancer :443
- |
- v
+  |
+  v
 Target Group :3000
- |
- v
+  |
+  v
 EC2
- |
- v
+  |
+  v
 ArticleHub Frontend
-Application Load Balancer
-
-HTTPS Listener
-
-Target Group
 
 The target group forwards traffic to the ArticleHub frontend running on EC2.
 
@@ -204,25 +181,22 @@ Health Check Path: /
 
 The EC2 target was successfully reported as healthy.
 
-Target Group Health
-
 Security Groups
 
 The infrastructure uses AWS Security Groups to control network access.
 
-The ALB allows public HTTPS traffic on:
+ALB Security Group
+
+The ALB allows public HTTPS traffic:
 
 TCP 443
+Application Security Group
 
 The EC2 instance uses:
 
 SSH       → 22
 Frontend  → 3000
 Backend   → 5000
-ALB Security Group
-
-Application Security Group
-
 AWS RDS PostgreSQL
 
 ArticleHub uses Amazon RDS PostgreSQL as its database.
@@ -236,8 +210,6 @@ Publicly accessible: No
 
 The database is protected using a separate security group and is not directly exposed to the public internet.
 
-RDS Database
-
 Deployment Verification
 
 The deployment was verified using:
@@ -248,14 +220,6 @@ Running Docker containers
 Healthy AWS Target Group
 HTTPS application access
 HTTP 200 response from the application
-Docker Containers
-
-ArticleHub Application
-
-ALB HTTP 200
-
-Jenkins Deployment Success
-
 End-to-End Flow
 Developer
    |
@@ -290,75 +254,40 @@ ArticleHub
    |
    v
 AWS RDS PostgreSQL
-# Project Screenshots
+Project Screenshots
+01 – ArticleHub Application
 
-## 01 – ArticleHub Application
+02 – EC2 Instance
 
-![ArticleHub Application](./screenshots/01-articlehub-application.png)
+03 – RDS Database
 
-## 02 – EC2 Instance
+04 – Application Load Balancer
 
-![EC2 Instance](./screenshots/02-ec2-instance.png)
+05 – ALB Listener
 
-## 03 – RDS Database
+06 – Target Group Health
 
-![RDS Database](./screenshots/03-rds-database.png)
+07 – ALB Security Group
 
-## 04 – Application Load Balancer
+08 – Application Security Group
 
-![Application Load Balancer](./screenshots/04-application-load-balancer.png)
+09 – Docker Containers
 
-## 05 – ALB Listener
+10 – Docker Compose
 
-![ALB Listener](./screenshots/05-alb-listener.png)
+11 – Ansible Playbook
 
-## 06 – Target Group Health
+12 – Ansible Deployment Success
 
-![Target Group Health](./screenshots/06-target-group-healthy.png)
+13 – Jenkins CI/CD Success
 
-## 07 – ALB Security Group
+14 – Terraform Infrastructure
 
-![ALB Security Group](./screenshots/07-alb-security-group.png)
+15 – Terraform Apply
 
-## 08 – Application Security Group
+16 – ALB HTTP 200
 
-![Application Security Group](./screenshots/08-app-security-group.png)
-
-## 09 – Docker Containers
-
-![Docker Containers](./screenshots/09-docker-containers.png)
-
-## 10 – Docker Compose
-
-![Docker Compose](./screenshots/10-docker-compose.png)
-
-## 11 – Ansible Playbook
-
-![Ansible Playbook](./screenshots/11-ansible-playbook.png)
-
-## 12 – Ansible Deployment Success
-
-![Ansible Deployment Success](./screenshots/12-ansible-success.png)
-
-## 13 – Jenkins CI/CD Success
-
-![Jenkins CI/CD Success](./screenshots/13-jenkins-cicd-success.png)
-
-## 14 – Terraform Infrastructure
-
-![Terraform Infrastructure](./screenshots/14-terraform-infrastructure.png)
-
-## 15 – Terraform Apply
-
-![Terraform Apply](./screenshots/15-terraform-apply.png)
-
-## 16 – ALB HTTP 200
-
-![ALB HTTP 200](./screenshots/16-alb-http-200.png)
-
-## 17 – Docker Hub Images
-
-![Docker Hub Images](./screenshots/17-dockerhub-images.png)
+17 – Docker Hub Images
 
 What This Project Demonstrates
 Git and GitHub
@@ -408,9 +337,9 @@ ArticleHub
    ↓
 AWS RDS PostgreSQL
 
-The Jenkins pipeline successfully builds, scans, publishes, deploys and verifies the ArticleHub application.
+The Jenkins pipeline successfully builds, scans, publishes, deploys, and verifies the ArticleHub application.
 
-Author-
+Author
 
 Meenakshi Sunil
 
