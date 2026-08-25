@@ -290,40 +290,75 @@ ArticleHub
    |
    v
 AWS RDS PostgreSQL
-Project Screenshots
-01 – ArticleHub Application
+# Project Screenshots
 
-02 – EC2 Instance
+## 01 – ArticleHub Application
 
-03 – RDS Database
+![ArticleHub Application](./screenshots/01-articlehub-application.png)
 
-04 – Application Load Balancer
+## 02 – EC2 Instance
 
-05 – ALB Listener
+![EC2 Instance](./screenshots/02-ec2-instance.png)
 
-06 – Target Group Health
+## 03 – RDS Database
 
-07 – ALB Security Group
+![RDS Database](./screenshots/03-rds-database.png)
 
-08 – Application Security Group
+## 04 – Application Load Balancer
 
-09 – Docker Containers
+![Application Load Balancer](./screenshots/04-application-load-balancer.png)
 
-10 – Docker Compose
+## 05 – ALB Listener
 
-11 – Ansible Playbook
+![ALB Listener](./screenshots/05-alb-listener.png)
 
-12 – Ansible Deployment Success
+## 06 – Target Group Health
 
-13 – Jenkins CI/CD Success
+![Target Group Health](./screenshots/06-target-group-healthy.png)
 
-14 – Terraform Infrastructure
+## 07 – ALB Security Group
 
-15 – Terraform Apply
+![ALB Security Group](./screenshots/07-alb-security-group.png)
 
-16 – ALB HTTP 200
+## 08 – Application Security Group
 
-17 – Docker Hub Images
+![Application Security Group](./screenshots/08-app-security-group.png)
+
+## 09 – Docker Containers
+
+![Docker Containers](./screenshots/09-docker-containers.png)
+
+## 10 – Docker Compose
+
+![Docker Compose](./screenshots/10-docker-compose.png)
+
+## 11 – Ansible Playbook
+
+![Ansible Playbook](./screenshots/11-ansible-playbook.png)
+
+## 12 – Ansible Deployment Success
+
+![Ansible Deployment Success](./screenshots/12-ansible-success.png)
+
+## 13 – Jenkins CI/CD Success
+
+![Jenkins CI/CD Success](./screenshots/13-jenkins-cicd-success.png)
+
+## 14 – Terraform Infrastructure
+
+![Terraform Infrastructure](./screenshots/14-terraform-infrastructure.png)
+
+## 15 – Terraform Apply
+
+![Terraform Apply](./screenshots/15-terraform-apply.png)
+
+## 16 – ALB HTTP 200
+
+![ALB HTTP 200](./screenshots/16-alb-http-200.png)
+
+## 17 – Docker Hub Images
+
+![Docker Hub Images](./screenshots/17-dockerhub-images.png)
 
 What This Project Demonstrates
 Git and GitHub
