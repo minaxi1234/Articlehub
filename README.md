@@ -375,7 +375,7 @@ AWS RDS PostgreSQL
 
 The Jenkins pipeline successfully builds, scans, publishes, deploys and verifies the ArticleHub application.
 
-Author
+Author-
 
 Meenakshi Sunil
 
