@@ -1,648 +1,372 @@
-# ArticleHub – DevOps Deployment Project
+# ArticleHub – CI/CD DevOps Deployment Project
 
 ## Overview
 
-ArticleHub is a full-stack article and blog application deployed using a practical DevOps workflow on AWS.
+ArticleHub is a full-stack article and blog application deployed on AWS using a practical DevOps and CI/CD workflow.
 
-The application contains:
+The project demonstrates how a containerized application can be built, security-scanned, pushed to Docker Hub, and automatically deployed to AWS EC2 using Jenkins and Ansible.
 
-* React + Vite frontend
-* Node.js + Express backend
-* PostgreSQL database
-* Docker and Docker Compose
-* Jenkins CI pipeline
-* Trivy container image scanning
-* Docker Hub
-* Terraform
-* Ansible
-* AWS EC2
-* AWS Application Load Balancer
-* AWS RDS PostgreSQL
+### Technologies Used
 
-The project demonstrates how an application can be containerized, scanned, stored in a Docker registry, deployed on AWS, and made publicly accessible through an Application Load Balancer.
+- React + Vite
+- Node.js + Express
+- PostgreSQL
+- Docker
+- Docker Compose
+- Jenkins
+- Trivy
+- Docker Hub
+- Ansible
+- Terraform
+- AWS EC2
+- AWS Application Load Balancer
+- AWS RDS PostgreSQL
+- Nginx
 
 ---
 
-## Architecture
-`
+# Architecture
+
 ```text
-                    GitHub
-                       |
-                       v
-                    Jenkins
-                       |
-             +---------+---------+
-             |         |         |
-          Checkout   Docker    Trivy
-                     Build      Scan
-                       |
-                       v
-                  Docker Hub
-                       |
-                       v
-                   AWS Cloud
-                       |
-              +--------+--------+
-              |                 |
-           Terraform          RDS
-              |             PostgreSQL
-              v
-             EC2
-              |
-           Ansible
-              |
-        Docker Compose
-          /       \
-         /         \
-   Frontend       Backend
-    :3000          :5000
-       |
-       v
+GitHub
+   |
+   v
+Jenkins
+   |
+   +---- Checkout
+   |
+   +---- Docker Build
+   |
+   +---- Trivy Scan
+   |
+   +---- Push to Docker Hub
+   |
+   +---- Deploy with Ansible
+   |
+   v
+AWS EC2
+   |
+   +---- Docker Compose
+   |       |
+   |       +---- Frontend :3000
+   |       |
+   |       +---- Backend :5000
+   |
+   v
 Application Load Balancer
-        :80
-```
+   |
+   | HTTPS :443
+   |
+   v
+ArticleHub Application
+   |
+   v
+AWS RDS PostgreSQL
+CI/CD Pipeline
 
----
+Jenkins automates the complete CI/CD workflow.
 
-# Technologies Used
+The pipeline performs:
 
-| Technology          | Purpose                                       |
-| ------------------- | --------------------------------------------- |
-| GitHub              | Source code management                        |
-| Jenkins             | Continuous Integration                        |
-| Docker              | Application containerization                  |
-| Docker Compose      | Running frontend and backend containers       |
-| Trivy               | Container image security scanning             |
-| Docker Hub          | Docker image registry                         |
-| Terraform           | Infrastructure as Code                        |
-| Ansible             | Server configuration and deployment           |
-| AWS EC2             | Application hosting                           |
-| AWS ALB             | Public application access and traffic routing |
-| AWS Target Group    | Registers and health-checks the EC2 target    |
-| AWS Security Groups | Network access control                        |
-| AWS RDS             | Managed PostgreSQL database                   |
-| React + Vite        | Frontend                                      |
-| Node.js + Express   | Backend                                       |
-| Nginx               | Production frontend server                    |
-
----
-
-# Application Components
-
-## Frontend
-
-The frontend is built using React and Vite.
-
-The production frontend is served using Nginx inside a Docker container.
-
-```text
-EC2 Port 3000 → Container Port 80
-```
-
-## Backend
-
-The backend is built using Node.js and Express.
-
-The backend runs on:
-
-```text
-Port 5000
-```
-
-## Database
-
-The application uses PostgreSQL hosted on AWS RDS.
-
-The configured database is:
-
-```text
-Database: my_db
-Engine: PostgreSQL
-Port: 5432
-Instance class: db.t3.micro
-Storage: 20 GB
-Publicly accessible: No
-```
-
-The RDS database is protected using a separate security group. PostgreSQL access is allowed from the ArticleHub application server.
-
----
-
-# Docker
-
-The frontend and backend are containerized separately.
-
-The containers are:
-
-```text
-articlehub-frontend
-articlehub-backend
-```
-
-They communicate through the Docker network:
-
-```text
-articlehub-network
-```
-
-The frontend is exposed on port `3000` and the backend on port `5000`.
-
-The containers were verified on the EC2 server using:
-
-```bash
-docker ps
-```
-
-The frontend was also verified locally using:
-
-```bash
-curl -I http://localhost:3000
-```
-
-The response returned:
-
-```text
-HTTP/1.1 200 OK
-Server: nginx
-```
-
-### Docker Containers
-
-![Docker Containers](screenshots/09-docker-containers.png)
-
-### Docker Compose
-
-![Docker Compose](screenshots/10-docker-compose.png)
-
----
-
-# Jenkins CI Pipeline
-
-Jenkins is used for the Continuous Integration workflow.
-
-The Jenkins pipeline performs the following steps:
-
-1. Checkout the ArticleHub source code from GitHub.
-2. Build the backend Docker image.
-3. Build the frontend Docker image.
-4. Scan both Docker images using Trivy.
-5. Push the Docker images to Docker Hub.
+Checkout source code from GitHub.
+Build frontend Docker image.
+Build backend Docker image.
+Scan images using Trivy.
+Push images to Docker Hub.
+Deploy the latest images using Ansible.
+Start the application using Docker Compose.
+Verify the deployment.
 
 The Docker images are:
 
-```text
-meenakshisunil/articlehub-backend:latest
 meenakshisunil/articlehub-frontend:latest
-```
-
-### Jenkins Pipeline Success
-
-![Jenkins Pipeline Success](screenshots/13-jenkins-success.png)
-
----
-
-# Trivy Security Scan
-
-Trivy is included in the Jenkins pipeline to scan the Docker images for known vulnerabilities.
-
-The pipeline scans:
-
-```text
 meenakshisunil/articlehub-backend:latest
+Jenkins CI/CD Success
+
+Docker
+
+The application uses two Docker containers:
+
+articlehub-frontend
+articlehub-backend
+
+The containers communicate through:
+
+articlehub-network
+
+Frontend:
+
+EC2 Port 3000 → Container Port 80
+
+Backend:
+
+EC2 Port 5000 → Container Port 5000
+Docker Containers
+
+Docker Compose
+
+Trivy Security Scanning
+
+Trivy is integrated into the Jenkins pipeline to scan the Docker images for known vulnerabilities before they are pushed to Docker Hub.
+
+Images scanned:
+
 meenakshisunil/articlehub-frontend:latest
-```
-
-This provides a security check before the images are pushed to Docker Hub.
-
----
-
-# Docker Hub
-
-After the Docker images are built and scanned, Jenkins authenticates with Docker Hub and pushes the images.
-
-Images:
-
-```text
 meenakshisunil/articlehub-backend:latest
-meenakshisunil/articlehub-frontend:latest
-```
+Docker Hub
 
----
+Jenkins pushes the successfully built and scanned images to Docker Hub.
 
-# Terraform
+Docker Hub Images
 
-Terraform is used as Infrastructure as Code to create and manage the AWS infrastructure required by ArticleHub.
+Ansible Deployment
 
-The Terraform configuration contains:
+Ansible is used for Continuous Deployment.
 
-```text
-main.tf
-variables.tf
-alb.tf
-rds.tf
-```
+Jenkins uses Ansible to deploy the latest Docker images to the AWS EC2 server.
 
-The AWS region used is:
+The deployment includes:
 
-```text
+Connecting to EC2
+Preparing the deployment directory
+Pulling the latest Docker images
+Running Docker Compose
+Starting frontend and backend containers
+Verifying the deployment
+
+Application directory:
+
+/opt/articlehub
+Ansible Playbook
+
+Ansible Deployment Success
+
+Terraform
+
+Terraform is used as Infrastructure as Code to provision and manage the AWS infrastructure.
+
+The infrastructure includes:
+
+EC2
+Security Groups
+Application Load Balancer
+Target Group
+ALB Listener
+RDS PostgreSQL
+
+AWS Region:
+
 ap-south-1
-```
+Terraform Infrastructure
 
-Terraform provisions the main infrastructure components including:
+Terraform Apply
 
-* EC2
-* Security Groups
-* Application Load Balancer
-* Target Group
-* Target Group Attachment
-* ALB Listener
-* RDS PostgreSQL
+AWS EC2
 
-### Terraform Infrastructure
+ArticleHub is deployed on an AWS EC2 instance running Docker and Docker Compose.
 
-![Terraform Infrastructure](screenshots/14-terraform-infrastructure.png)
+Deployment directory:
 
-### Terraform Apply
-
-![Terraform Apply](screenshots/15-terraform-apply.png)
-
----
-
-# AWS EC2
-
-The ArticleHub application is deployed on an AWS EC2 instance.
-
-The EC2 instance runs:
-
-* Docker
-* Docker Compose
-* ArticleHub frontend
-* ArticleHub backend
-
-The application deployment directory is:
-
-```text
 /opt/articlehub
-```
+EC2 Instance
 
-### EC2 Instance
+Application Load Balancer
 
-![EC2 Instance](screenshots/02-ec2-instance.png)
-
----
-
-# Ansible
-
-Ansible is used for server configuration and application deployment on the EC2 instance.
-
-The Ansible workflow includes tasks such as:
-
-1. Connecting to the EC2 server.
-2. Preparing the server for Docker.
-3. Creating the application deployment directory.
-4. Getting the ArticleHub application.
-5. Building the application containers.
-6. Starting the application using Docker Compose.
-7. Verifying the deployment.
-
-The deployment is performed on:
-
-```text
-/opt/articlehub
-```
-
-### Ansible Playbook
-
-![Ansible Playbook](screenshots/11-ansible-playbook.png)
-
-### Ansible Successful Execution
-
-![Ansible Success](screenshots/12-ansible-success.png)
-
----
-
-# AWS Application Load Balancer
-
-An Application Load Balancer provides public access to the ArticleHub application.
-
-The ALB is configured with:
-
-```text
-Protocol: HTTP
-Listener: Port 80
-```
-
-The ALB forwards incoming requests to the ArticleHub target group.
+The AWS Application Load Balancer provides public HTTPS access to ArticleHub.
 
 Traffic flow:
 
-```text
 User
  |
  v
-Application Load Balancer :80
+Application Load Balancer :443
  |
  v
 Target Group :3000
  |
  v
-ArticleHub EC2
+EC2
  |
  v
-Frontend Container
-```
+ArticleHub Frontend
+Application Load Balancer
 
-### Application Load Balancer
+HTTPS Listener
 
-![Application Load Balancer](screenshots/04-application-load-balancer.png)
+ArticleHub HTTPS Application
 
-### ALB Listener
+Target Group
 
-![ALB Listener](screenshots/05-alb-listener.png)
+The target group forwards traffic to the ArticleHub frontend running on EC2.
 
----
-
-# Target Group
-
-The ArticleHub target group is configured as:
-
-```text
-Name: articlehub-tg
 Target Type: Instance
 Protocol: HTTP
 Port: 3000
 Health Check Path: /
-```
 
-The EC2 instance is registered as the target.
+The EC2 target was successfully reported as healthy.
 
-The target was successfully reported as:
+Target Group Health
 
-```text
-Healthy
-```
+Security Groups
 
-### Target Group Health
+The infrastructure uses AWS Security Groups to control network access.
 
-![Target Group Healthy](screenshots/06-target-group-healthy.png)
+The ALB allows public HTTPS traffic on:
 
----
+TCP 443
 
-# Security Groups
+The EC2 instance uses:
 
-Two main security groups are used for the application infrastructure.
-
-## ALB Security Group
-
-The Application Load Balancer security group allows public HTTP traffic:
-
-```text
-Protocol: TCP
-Port: 80
-Source: 0.0.0.0/0
-```
-
-### ALB Security Group
-
-![ALB Security Group](screenshots/07-alb-security-group.png)
-
-## Application Security Group
-
-The ArticleHub EC2 security group contains rules for:
-
-```text
 SSH       → 22
 Frontend  → 3000
 Backend   → 5000
-```
+ALB Security Group
 
-The frontend and backend application ports are accessed from the ALB security group.
+Application Security Group
 
-### Application Security Group
+AWS RDS PostgreSQL
 
-![Application Security Group](screenshots/08-app-security-group.png)
+ArticleHub uses Amazon RDS PostgreSQL as its database.
 
----
-
-# AWS RDS PostgreSQL
-
-The project uses Amazon RDS to host the PostgreSQL database.
-
-The configured database includes:
-
-```text
-Identifier: articlehub-postgres
-Engine: PostgreSQL
 Database: my_db
+Engine: PostgreSQL
 Port: 5432
-Instance class: db.t3.micro
-Storage: 20 GB gp3
+Instance: db.t3.micro
+Storage: 20 GB
 Publicly accessible: No
-```
 
-The database is placed behind an RDS security group.
+The database is protected using a separate security group and is not directly exposed to the public internet.
 
-The RDS security group allows PostgreSQL traffic from the ArticleHub application security group.
+RDS Database
 
-This keeps the database from being directly exposed to the public internet.
+Deployment Verification
 
-### RDS Database
+The deployment was verified using:
 
-![RDS Database](screenshots/03-rds-database.png)
+Jenkins pipeline success
+Successful Ansible deployment
+Running Docker containers
+Healthy AWS Target Group
+HTTPS application access
+HTTP 200 response from the application
+Docker Containers
 
----
+ArticleHub Application
 
-# End-to-End Deployment Flow
+Jenkins Deployment Success
 
-The complete project flow is:
-
-```text
+End-to-End Flow
 Developer
-    |
-    v
+   |
+   v
 GitHub
-    |
-    v
+   |
+   v
 Jenkins
-    |
-    +---- Checkout
-    |
-    +---- Build Docker Images
-    |
-    +---- Trivy Security Scan
-    |
-    +---- Push Images to Docker Hub
-    |
-    v
-Terraform
-    |
-    +---- EC2
-    +---- Security Groups
-    +---- Application Load Balancer
-    +---- Target Group
-    +---- RDS PostgreSQL
-    |
-    v
-Ansible
-    |
-    +---- Configure EC2
-    +---- Deploy ArticleHub
-    +---- Start Docker Compose
-    |
-    v
+   |
+   +---- Checkout
+   +---- Docker Build
+   +---- Trivy Scan
+   +---- Docker Hub
+   +---- Ansible Deployment
+   |
+   v
+AWS EC2
+   |
+   v
+Docker Compose
+   |
+   +---- Frontend
+   +---- Backend
+   |
+   v
 Application Load Balancer
-    |
-    | HTTP :80
-    v
-Target Group
-    |
-    | HTTP :3000
-    v
-ArticleHub Frontend
-    |
-    v
-ArticleHub Backend :5000
-    |
-    v
-AWS RDS PostgreSQL :5432
-```
-
----
-
-# Deployment Verification
-
-The deployment was verified at multiple levels.
-
-### Docker Containers
-
-Both frontend and backend containers were running successfully.
-
-![Docker Containers](screenshots/09-docker-containers.png)
-
-### Application
-
-The ArticleHub application was successfully accessed through the Application Load Balancer.
-
-![ArticleHub Application](screenshots/01-articlehub-application.png)
-
-### ALB HTTP Response
-
-The ALB returned:
-
-```text
-HTTP/1.1 200 OK
-```
-
-![ALB HTTP 200](screenshots/16-alb-http-200.png)
-
-### Target Health
-
-The target group reported the EC2 instance as healthy.
-
-![Target Group Health](screenshots/06-target-group-healthy.png)
-
----
-
+   |
+   | HTTPS
+   |
+   v
+ArticleHub
+   |
+   v
+AWS RDS PostgreSQL
 # Project Screenshots
 
-The following screenshots are included in this repository as evidence of the implemented infrastructure and deployment.
-
 ## 01 – ArticleHub Application
-
 ![ArticleHub Application](screenshots/01-articlehub-application.png)
 
 ## 02 – EC2 Instance
-
 ![EC2 Instance](screenshots/02-ec2-instance.png)
 
 ## 03 – RDS Database
-
 ![RDS Database](screenshots/03-rds-database.png)
 
 ## 04 – Application Load Balancer
-
 ![Application Load Balancer](screenshots/04-application-load-balancer.png)
 
 ## 05 – ALB Listener
-
 ![ALB Listener](screenshots/05-alb-listener.png)
 
 ## 06 – Target Group Health
-
 ![Target Group Health](screenshots/06-target-group-healthy.png)
 
 ## 07 – ALB Security Group
-
 ![ALB Security Group](screenshots/07-alb-security-group.png)
 
 ## 08 – Application Security Group
-
 ![Application Security Group](screenshots/08-app-security-group.png)
 
 ## 09 – Docker Containers
-
 ![Docker Containers](screenshots/09-docker-containers.png)
 
 ## 10 – Docker Compose
-
 ![Docker Compose](screenshots/10-docker-compose.png)
 
 ## 11 – Ansible Playbook
-
-![Ansible Playbook](screenshots/11-ansible-playbook.png)
+![Ansible Playbook](screenshots/11-ansible-playbook%20(2).png)
 
 ## 12 – Ansible Success
-
 ![Ansible Success](screenshots/12-ansible-success.png)
 
-## 13 – Jenkins Success
-
-![Jenkins Success](screenshots/13-jenkins-success.png)
+## 13 – Jenkins CI/CD Success
+![Jenkins CI/CD Success](screenshots/13-jenkins-cicd-success.png)
 
 ## 14 – Terraform Infrastructure
-
 ![Terraform Infrastructure](screenshots/14-terraform-infrastructure.png)
 
 ## 15 – Terraform Apply
-
 ![Terraform Apply](screenshots/15-terraform-apply.png)
 
 ## 16 – ALB HTTP 200
-
 ![ALB HTTP 200](screenshots/16-alb-http-200.png)
 
----
+## 17 – Docker Hub Images
+![Docker Hub Images](screenshots/17-dockerhub-images.png)
 
-# What This Project Demonstrates
+What This Project Demonstrates
+Git and GitHub
+Jenkins CI/CD
+Docker
+Docker Compose
+Trivy Security Scanning
+Docker Hub
+Ansible
+Terraform
+AWS EC2
+AWS Application Load Balancer
+AWS Target Groups
+AWS Security Groups
+AWS RDS PostgreSQL
+Infrastructure as Code
+Continuous Integration
+Continuous Deployment
+Automated Docker image delivery
+Automated application deployment
+Cloud-based application deployment
+Final Result
 
-This project demonstrates practical experience with:
+ArticleHub was successfully containerized and deployed on AWS using a complete CI/CD workflow.
 
-* Git and GitHub
-* Jenkins CI
-* Docker
-* Docker Compose
-* Trivy
-* Docker Hub
-* Ansible
-* Terraform
-* AWS EC2
-* AWS Application Load Balancer
-* AWS Target Groups
-* AWS Security Groups
-* AWS RDS PostgreSQL
-* Containerized application deployment
-* Infrastructure as Code
-* Cloud-based application deployment
-
----
-
-# Final Result
-
-ArticleHub was successfully containerized and deployed on AWS.
-
-The final workflow is:
-
-```text
 GitHub
    ↓
 Jenkins
@@ -653,25 +377,24 @@ Trivy Scan
    ↓
 Docker Hub
    ↓
-Terraform AWS Infrastructure
-   ↓
-Ansible Deployment
+Ansible
    ↓
 AWS EC2
    ↓
+Docker Compose
+   ↓
 Application Load Balancer
    ↓
-ArticleHub Application
+HTTPS
+   ↓
+ArticleHub
    ↓
 AWS RDS PostgreSQL
-```
 
-The application was successfully verified through the Application Load Balancer and returned an HTTP `200 OK` response.
+The Jenkins pipeline successfully builds, scans, publishes, deploys and verifies the ArticleHub application.
 
----
+Author
 
-## Author
-
-**Meenakshi Sunil**
+Meenakshi Sunil
 
 GitHub: https://github.com/minaxi1234
