@@ -344,7 +344,7 @@ AWS RDS PostgreSQL
 
 ## 18 – Database Images
 
-![Database Images](screenshots/Screenshot 2026-08-27 224212.png)
+![Database Images](screenshots/18-db-images.png.png)
 
 ## What This Project Demonstrates
 
