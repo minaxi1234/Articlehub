@@ -342,6 +342,10 @@ AWS RDS PostgreSQL
 
 ![Docker Hub Images](screenshots/17-dockerhub-images.png)
 
+## 18 – Database Images
+
+![Database Images](screenshots/Screenshot 2026-08-27 224212.png)
+
 ## What This Project Demonstrates
 
 * Git and GitHub
